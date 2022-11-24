@@ -20,34 +20,34 @@ key:            .asciiz "ku"
                 ; ZDE NAHRADTE KOD VASIM RESENIM
 main:
                 loop:
-                    lb r29, login(r5)  ; Load char from login
-                    daddi r7, r0, 96   ; 'a' - 1
-                    slt r15, r7, r29   ; Check if char is lower than 'a'
-                    beqz r15, loop_end ; If yes, break
-                    andi r15, r5, 1    ; Check if index is odd
-                    beqz r15, odd      ; If yes, jump to odd
+                    lb r29, login(r5)     ; Load char from login
+                    daddi r7, r0, 96      ; 'a' - 1
+                    slt r15, r7, r29      ; Check if char is lower than 'a'
+                    beq r15, r0, loop_end ; If yes, break
+                    andi r15, r5, 1       ; Check if index is odd
+                    beq r15, r0, odd      ; If yes, jump to odd
 
                     ; Even index
                     even:
-                        daddi r7, r0, 1         ; 1
-                        lb r7, key(r7)          ; Load second key char
-                        daddi r29, r29, 96      ; Add 'a' - 1
-                        dsub r29, r29, r7       ; Subtract key char from login
-                        daddi r7, r0, 97        ; 'a'
-                        slt r15, r29, r7        ; r15 = [0] < [1] ? 1 : 0
-                        beqz r15, even_odd_end  ; Char is bigger than 'a' so skip addition
-                        daddi r29, r29, 26      ; Roll over
+                        daddi r7, r0, 1            ; 1
+                        lb r7, key(r7)             ; Load second key char
+                        daddi r29, r29, 96         ; Add 'a' - 1
+                        dsub r29, r29, r7          ; Subtract key char from login
+                        daddi r7, r0, 97           ; 'a'
+                        slt r15, r29, r7           ; r15 = [0] < [1] ? 1 : 0
+                        beq r15, r0, even_odd_end  ; Char is bigger than 'a' so skip addition
+                        daddi r29, r29, 26         ; Roll over
 
                     ; Odd index
                     b even_odd_end
                     odd:
-                        lb r7, key(r0)           ; Load first key char
-                        dadd r29, r29, r7        ; Add key char to char from login
-                        daddi r29, r29, -96      ; Subtract 'a' - 1
-                        daddi r7, r0, 122        ; 'z'
-                        slt r15, r7, r29         ; r15 = [0] < [1] ? 1 : 0
-                        beqz r15, even_odd_end   ; Char is smaller or equal to 'z' so skip subtraction
-                        daddi r29, r29, -26      ; Roll over
+                        lb r7, key(r0)             ; Load first key char
+                        dadd r29, r29, r7          ; Add key char to char from login
+                        daddi r29, r29, -96        ; Subtract 'a' - 1
+                        daddi r7, r0, 122          ; 'z'
+                        slt r15, r7, r29           ; r15 = [0] < [1] ? 1 : 0
+                        beq r15, r0, even_odd_end  ; Char is smaller or equal to 'z' so skip subtraction
+                        daddi r29, r29, -26        ; Roll over
 
                     ; Print char
                     even_odd_end:
